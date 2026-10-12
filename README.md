@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/33256572/README.md)
 # Amanda's CRM
 
 A simple customer tracker for Amanda's mobile home sales. It is a small web app
@@ -10,7 +9,8 @@ up information: no automated emails, texts or reminders.
 - **Customers:** a list with search (name or phone) and a filter by stage.
 - **Customer page:** all of a customer's details plus a dated notes log.
 - **Add / edit:** one form for contact details, what they want, financing, the
-  deal, and the next follow-up.
+  deal, and the next follow-up. The edit form also has **Delete customer**,
+  which asks for confirmation and then removes the customer and their notes.
 - **Follow-ups:** everyone with a follow-up date, earliest first, overdue ones
   marked. It only displays them; nothing is sent or scheduled.
 - **Backup:** save a backup file, restore from one, or export a spreadsheet.

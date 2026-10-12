@@ -79,6 +79,17 @@ async function saveCustomer(customer) {
   customers = customers.filter((c) => c.id !== customer.id).concat(customer);
 }
 
+async function deleteCustomer(id) {
+  await new Promise((resolve, reject) => {
+    const tx = db.transaction('customers', 'readwrite');
+    tx.objectStore('customers').delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error);
+  });
+  customers = customers.filter((c) => c.id !== id);
+}
+
 // Replaces every customer in one transaction, so a failed restore changes nothing.
 async function replaceAllCustomers(list) {
   await new Promise((resolve, reject) => {
@@ -297,8 +308,26 @@ function renderForm(existing) {
       <div class="actions">
         <button class="btn btn-primary" type="submit">Save</button>
         <a class="btn" href="${cancelHref}">Cancel</a>
+        ${existing ? '<button class="btn btn-danger" id="delete-btn" type="button">Delete customer</button>' : ''}
       </div>
     </form>`;
+
+  if (existing) {
+    document.getElementById('delete-btn').addEventListener('click', async () => {
+      const noteCount = (existing.notes || []).length;
+      const question = `Delete ${existing.name} and their ${noteCount} note${noteCount === 1 ? '' : 's'}? This cannot be undone.`;
+      if (!confirm(question)) return;
+      try {
+        await deleteCustomer(existing.id);
+      } catch (err) {
+        const error = document.getElementById('form-error');
+        error.textContent = 'Could not delete. Nothing was changed. Please try again.';
+        error.hidden = false;
+        return;
+      }
+      location.hash = '#/';
+    });
+  }
 
   document.getElementById('customer-form').addEventListener('submit', async (e) => {
     e.preventDefault();
